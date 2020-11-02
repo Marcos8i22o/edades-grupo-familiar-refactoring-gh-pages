@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="main.css">
+    <title>Edades del grupo familiar</title>
+</head>
+
+<body>
+    <form>
+        <h3>Bienvenido, ¿cuántos integrantes de la familia desea agregar?</h3>
+        <input type="number" id="cantidad-integrantes-familia">
+        <button type="submit" id="siguiente">Siguiente</button>
+        <br>
+
+
+        <br>
+        <div id="lista-integrantes" class="oculto">
+
+        </div>
+
+        <button type="reset" id="resetear">Empezar de nuevo</button>
+        <button type="button" id="calcular">Calcular</button>
+
+        <div id="resultados" class="oculto">
+            <p>El mayor integrante de la familia tiene: <strong id="mayor-integrante"></strong> </p>
+            <p>El menor integrante de la familia tiene: <strong id="menor-integrante"></strong> </p>
+            <p>El promedio de edades del grupo familiar es: <strong id="promedio-edades-familia"></strong> </p>
+        </div>
+    </form>
+
+
+    <script src="calculos.js"></script>
+    <script src="tarea-clase-6.js"></script>
+    <script src="pruebas.js"></script>
+</body>
+
+</html>

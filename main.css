@@ -1,0 +1,9 @@
+.oculto {
+    display: none;
+}
+
+#lista-integrantes {
+
+    text-align: left;
+    width: 200px;
+}
