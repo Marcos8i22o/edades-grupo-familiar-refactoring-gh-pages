@@ -6,11 +6,15 @@ Al hacer click en "calcular", mostrar en un elemento pre-existente la mayor edad
 Punto bonus: Crear un botón para "empezar de nuevo" que empiece el proceso nuevamente, borrando los inputs ya creados (investigar cómo en MDN).
 */
 
-const $botonSiguiente = document.querySelector("#siguiente");
-const $botonEmpezarDeNuevo = document.querySelector("#resetear");
-const $botonCalcular = document.querySelector("#calcular");
-const $listaIntegrantes = document.querySelector("#lista-integrantes");
-const $resultados = document.querySelector("#resultados");
+const $form = document.querySelector("#edades-grupo-familiar");
+const $botonSiguiente = $form.querySelector("#siguiente");
+const $botonEmpezarDeNuevo = $form.querySelector("#resetear");
+const $botonCalcular = $form.querySelector("#calcular");
+const $listaIntegrantes = $form.querySelector("#lista-integrantes");
+const $resultados = $form.querySelector("#resultados");
+const $cantidadIntegrantes = $form.querySelector(
+  "#cantidad-integrantes-familia"
+);
 
 function mostrarCantidadIntegrantes() {
   $listaIntegrantes.className = "";
@@ -18,19 +22,23 @@ function mostrarCantidadIntegrantes() {
 
 function crearIntegrantes(cantidadIntegrantes) {
   for (let i = 0; i < cantidadIntegrantes; i++) {
+    const integrante = {
+      edad: {
+        tag: document.createElement("input"),
+      },
+    };
+    integrante.edad.tag.setAttribute("type", "number");
+    integrante.edad.tag.setAttribute("id", "edad-integrante");
+    integrante.edad.tag.setAttribute("class", "edades-integrantes");
+
     const $EdadIntegrante = document.createElement("label");
     const textoLabel = document.createTextNode(
       `Edad del integrante #${i + 1}: `
     );
-    const $edad = document.createElement("input");
-
-    $edad.type = "number";
-    $edad.id = "edad-integrante";
-    $edad.className = "edades-integrantes";
 
     $EdadIntegrante.appendChild(textoLabel);
     $listaIntegrantes.appendChild($EdadIntegrante);
-    $listaIntegrantes.appendChild($edad);
+    $listaIntegrantes.appendChild(integrante.edad.tag);
   }
 }
 
@@ -38,7 +46,7 @@ function borrarIntegrantes() {
   while ($listaIntegrantes.firstChild) {
     $listaIntegrantes.removeChild($listaIntegrantes.firstChild);
   }
-  document.querySelector("#cantidad-integrantes-familia").value = "";
+  $cantidadIntegrantes.value = "";
 }
 
 function habilitarBotonSiguiente() {
@@ -68,11 +76,22 @@ function ocultarResultados() {
 
 $botonSiguiente.onclick = function () {
   $botonSiguiente.disabled = true;
-  const cantidadIntegrantes = Number(
-    document.querySelector("#cantidad-integrantes-familia").value
-  );
+  const cantidadIntegrantes = Number($cantidadIntegrantes.value);
 
-  validarCantidadIntegrantes(cantidadIntegrantes);
+  const errores = {
+    errorCantidadIntegrantes: validarCantidadIntegrantes(cantidadIntegrantes),
+  };
+
+  if (errores.errorCantidadIntegrantes) {
+    const $errores = document.querySelector("#errores");
+    const $error = document.createElement("li");
+    $error.innerText = errores.errorCantidadIntegrantes;
+
+    $cantidadIntegrantes.className = "error";
+    $errores.appendChild($error);
+  } else {
+    $cantidadIntegrantes.className = "";
+  }
 
   crearIntegrantes(cantidadIntegrantes);
   mostrarCantidadIntegrantes();
@@ -80,6 +99,8 @@ $botonSiguiente.onclick = function () {
 };
 
 $botonEmpezarDeNuevo.onclick = function () {
+  $cantidadIntegrantes.className = "";
+  errores.innerText = "";
   borrarIntegrantes();
   habilitarBotonSiguiente();
   ocultarResultados();
@@ -100,3 +121,5 @@ function validarCantidadIntegrantes(cantidadIntegrantes) {
 
   return "";
 }
+
+function validarEdadIntegrante() {}
