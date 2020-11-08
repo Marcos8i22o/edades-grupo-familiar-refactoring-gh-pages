@@ -20,6 +20,60 @@ function mostrarCantidadIntegrantes() {
   $listaIntegrantes.className = "";
 }
 
+function validarFormulario() {
+  $botonSiguiente.onclick = function () {
+    //Habilito el botón Siguiente y guardo en una constante la cantidad de integrantes
+    //ingresada por el usuario
+    $botonSiguiente.disabled = true;
+    const cantidadIntegrantes = Number(
+      $form.querySelector("#cantidad-integrantes-familia").value
+    );
+
+    //Creo un objeto "errores" que guarda el valor que retorna la función
+    //que valida la cantidad de integrantes ingresada
+    const errores = {
+      errorCantidadIntegrantes: validarCantidadIntegrantes(cantidadIntegrantes),
+    };
+
+    //Si la cantidad de integrantes ingresada es incorrecta:
+    //Guardo * el elemento <ul> "errores"
+    //Creo un elemento <li> "error" con el texto que hay en el objeto "errores"
+    if (errores.errorCantidadIntegrantes) {
+      const $errores = $form.querySelector("#errores");
+      const $error = document.createElement("li");
+      $error.innerText = errores.errorCantidadIntegrantes;
+      //Le asigno al elemento <div> (lista de integrantes) la clase error, que
+      //bordea en rojo el campo erróneo
+      $cantidadIntegrantes.className = "error";
+      //Le agrego el elemento <li> "error" a la lista de errores <ul>
+      $errores.appendChild($error);
+      //Sino
+      //Al elemento <div> (lista de integrantes), le asigno la clase vacio.
+    } else {
+      $cantidadIntegrantes.className = "";
+    }
+
+    crearIntegrantes(cantidadIntegrantes);
+    mostrarCantidadIntegrantes();
+    return false;
+  };
+
+  $botonEmpezarDeNuevo.onclick = function () {
+    borrarCampos();
+    borrarIntegrantes();
+    habilitarBotonSiguiente();
+    ocultarResultados();
+    return false;
+  };
+
+  $botonCalcular.onclick = function () {
+    const edadesIntegrantes = $form.querySelectorAll(".edades-integrantes");
+    validarEdadesIntegrantes(edadesIntegrantes);
+    calcular(edadesIntegrantes);
+    mostrarResultados(edadesIntegrantes);
+  };
+}
+
 function crearIntegrantes(cantidadIntegrantes) {
   for (let i = 0; i < cantidadIntegrantes; i++) {
     const $EdadIntegrante = document.createElement("label");
@@ -58,55 +112,13 @@ function mostrarResultados(edadesIntegrantes) {
   );
 }
 
-function mostrarEdades(mayorIntegrante, calculo) {
-  $form.querySelector(`#${mayorIntegrante}`).textContent += `${calculo} años.`;
+function mostrarEdades(integrante, calculo) {
+  $form.querySelector(`#${integrante}`).textContent += `${calculo} años.`;
 }
 
 function ocultarResultados() {
   $resultados.className = "oculto";
 }
-
-$botonSiguiente.onclick = function () {
-  $botonSiguiente.disabled = true;
-  const cantidadIntegrantes = Number(
-    $form.querySelector("#cantidad-integrantes-familia").value
-  );
-
-  const errores = {
-    errorCantidadIntegrantes: validarCantidadIntegrantes(cantidadIntegrantes),
-  };
-
-  validarCantidadIntegrantes(cantidadIntegrantes);
-
-  if (errores.errorCantidadIntegrantes) {
-    const $errores = $form.querySelector("#errores");
-    const $error = document.createElement("li");
-    $error.innerText = errores.errorCantidadIntegrantes;
-
-    $cantidadIntegrantes.className = "error";
-    $errores.appendChild($error);
-  } else {
-    $cantidadIntegrantes.className = "";
-  }
-
-  crearIntegrantes(cantidadIntegrantes);
-  mostrarCantidadIntegrantes();
-  return false;
-};
-
-$botonEmpezarDeNuevo.onclick = function () {
-  borrarIntegrantes();
-  habilitarBotonSiguiente();
-  ocultarResultados();
-  return false;
-};
-
-$botonCalcular.onclick = function () {
-  const edadesIntegrantes = $form.querySelectorAll(".edades-integrantes");
-  validarEdadesIntegrantes(edadesIntegrantes);  
-  calcular(edadesIntegrantes);
-  mostrarResultados(edadesIntegrantes);
-};
 
 function validarCantidadIntegrantes(cantidadIntegrantes) {
   if (cantidadIntegrantes < 1) {
@@ -118,14 +130,14 @@ function validarCantidadIntegrantes(cantidadIntegrantes) {
 
 function validarEdadesIntegrantes(edadesIntegrantes) {
   const edadesIntegrantesValidas = [];
-  console.log(edadesIntegrantes)
-  edadesIntegrantes.forEach(function(edad) {
-    if (Number(edad.value) <= 0) {
+
+  for (let i = 0; i < edadesIntegrantes.length; i++) {
+    if (Number(edadesIntegrantes[i].value) <= 0) {
       return "Edad inválida. Ingrese un número correcto";
     } else {
-      edadesIntegrantesValidas.push(Number(edad.value));
+      edadesIntegrantesValidas.push(Number(edadesIntegrantes[i].value));
     }
-  });
+  }
 
   return edadesIntegrantesValidas;
 }
@@ -135,3 +147,10 @@ function borrarError() {
   $cantidadIntegrantes.className = "";
 }
 
+function borrarCampos() {
+  $form.querySelector("#mayor-integrante").textContent = "";
+  $form.querySelector("#menor-integrante").textContent = "";
+  $form.querySelector("#promedio-edades-familia").textContent = "";
+}
+
+validarFormulario();

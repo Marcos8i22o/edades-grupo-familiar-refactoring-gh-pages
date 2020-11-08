@@ -15,7 +15,7 @@ function calcularMenorEdad(edadesIntegrantes) {
 }
 
 function calcularMayorEdad(edadesIntegrantes) {
-  let max = 0;
+  let max = Number(edadesIntegrantes[0].value);
   for (let i = 1; i < edadesIntegrantes.length; i++) {
     if (Number(edadesIntegrantes[i].value) > max) {
       max = Number(edadesIntegrantes[i].value);
