@@ -21,6 +21,9 @@ function mostrarCantidadIntegrantes() {
 }
 
 function validarFormulario() {
+  //Creo un objeto "errores"
+  const errores = {};
+
   $botonSiguiente.onclick = function () {
     //Habilito el botón Siguiente y guardo en una constante la cantidad de integrantes
     //ingresada por el usuario
@@ -29,19 +32,17 @@ function validarFormulario() {
       $form.querySelector("#cantidad-integrantes-familia").value
     );
 
-    //Creo un objeto "errores" que guarda el valor que retorna la función
-    //que valida la cantidad de integrantes ingresada
-    const errores = {
-      errorCantidadIntegrantes: validarCantidadIntegrantes(cantidadIntegrantes),
-    };
+    //Guarda el valor que retorna la función que valida la cantidad
+    //de integrantes ingresada 
+    const errorCantidadIntegrantes = validarCantidadIntegrantes(cantidadIntegrantes);
 
     //Si la cantidad de integrantes ingresada es incorrecta:
     //Guardo * el elemento <ul> "errores"
-    //Creo un elemento <li> "error" con el texto que hay en el objeto "errores"
-    if (errores.errorCantidadIntegrantes) {
+    //Creo un elemento <li> "error" con el texto que hay en "errorCantidadIntegrantes"
+    if (errorCantidadIntegrantes) {
       const $errores = $form.querySelector("#errores");
       const $error = document.createElement("li");
-      $error.innerText = errores.errorCantidadIntegrantes;
+      $error.innerText = errorCantidadIntegrantes;
       //Le asigno al elemento <div> (lista de integrantes) la clase error, que
       //bordea en rojo el campo erróneo
       $cantidadIntegrantes.className = "error";
@@ -67,11 +68,47 @@ function validarFormulario() {
   };
 
   $botonCalcular.onclick = function () {
+    //Al hacer click en el botón CALCULAR:
+    //Guardo el nodelist con todas las edades ingresadas
     const edadesIntegrantes = $form.querySelectorAll(".edades-integrantes");
-    validarEdadesIntegrantes(edadesIntegrantes);
-    calcular(edadesIntegrantes);
-    mostrarResultados(edadesIntegrantes);
+    //Valido las edades ingresadas y guardo el mensaje obtenido,
+    //en el objeto "errores"
+    for(let i = 0; i < edadesIntegrantes.length; i++)  {
+      errores.edad = validarEdadesIntegrantes(edadesIntegrantes);
+      const esExito = manejarErrores(errores) === 0;
+    }
+    if (esExito){
+      calcular(edadesIntegrantes);
+      mostrarResultados(edadesIntegrantes);
+    }
   };
+
+
+}
+
+function manejarErrores (errores) {
+  const $errores = document.querySelector('#errores');
+  let cuentaErrores = 0;
+
+  const keys = Object.keys(errores);
+  keys.forEach(function(key) {
+    const error = errores[key];
+    
+    if (error) {
+      $form[key].className = "error";
+      const $error = document.createElement('li');
+      $error.textContent = error;
+      
+      $errores.appendChild($error);
+      
+      cuentaErrores++;
+
+    }else{
+      $form[key].className = "";
+    }
+  });
+
+  return cuentaErrores;
 }
 
 function crearIntegrantes(cantidadIntegrantes) {
@@ -79,15 +116,18 @@ function crearIntegrantes(cantidadIntegrantes) {
     const $EdadIntegrante = document.createElement("label");
     $EdadIntegrante.textContent = `Edad del integrante #${i + 1}: `;
     const $edad = document.createElement("input");
-
+    
     $edad.type = "number";
     $edad.id = "edad-integrante";
+    $edad.name = "edad";
     $edad.className = "edades-integrantes";
 
     $listaIntegrantes.appendChild($EdadIntegrante);
     $listaIntegrantes.appendChild($edad);
   }
 }
+
+
 
 function borrarIntegrantes() {
   while ($listaIntegrantes.firstChild) {
@@ -129,17 +169,15 @@ function validarCantidadIntegrantes(cantidadIntegrantes) {
 }
 
 function validarEdadesIntegrantes(edadesIntegrantes) {
-  const edadesIntegrantesValidas = [];
-
+  
   for (let i = 0; i < edadesIntegrantes.length; i++) {
+
     if (Number(edadesIntegrantes[i].value) <= 0) {
       return "Edad inválida. Ingrese un número correcto";
-    } else {
-      edadesIntegrantesValidas.push(Number(edadesIntegrantes[i].value));
     }
   }
 
-  return edadesIntegrantesValidas;
+  return "";
 }
 
 function borrarError() {
