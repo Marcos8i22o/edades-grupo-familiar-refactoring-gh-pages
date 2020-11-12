@@ -17,10 +17,11 @@ function probarValidarEdadesIntegrantes() {
   // );
 
   console.assert(
-    validarEdadesIntegrantes([{value:1},{value:-2}]) === "Edad inválida. Ingrese un número correcto",
+    validarEdadesIntegrantes(([1,"sd"].length === 0 ),"Edad inválida. Ingrese un número correcto"),
     "ValidarEdadesIntegrantes no validó que la edad ingresada sea mayor a cero"
   );
 }
 
 probarValidarCantidadIntegrantes();
 probarValidarEdadesIntegrantes();
+//[{value:1},{value:-2}]
