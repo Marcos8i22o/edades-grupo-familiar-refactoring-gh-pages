@@ -7,12 +7,12 @@ Punto bonus: Crear un botón para "empezar de nuevo" que empiece el proceso nuev
 */
 
 const $form = document.querySelector("#edades-grupo-familiar");
-const $botonSiguiente = $form.querySelector("#siguiente");
 const $botonEmpezarDeNuevo = $form.querySelector("#resetear");
 const $botonCalcular = $form.querySelector("#calcular");
-const $listaIntegrantes = $form.querySelector("#lista-integrantes");
-const $resultados = $form.querySelector("#resultados");
-const $cantidadIntegrantes = $form.querySelector(
+const $botonSiguiente = document.querySelector("#siguiente");
+const $listaIntegrantes = document.querySelector("#lista-integrantes");
+const $resultados = document.querySelector("#resultados");
+const $cantidadIntegrantes = document.querySelector(
   "#cantidad-integrantes-familia"
 );
 
@@ -20,7 +20,7 @@ function mostrarCantidadIntegrantes() {
   $listaIntegrantes.className = "";
 }
 
-function validarFormulario() {
+function validarFormulario(event) {
   //Creo un objeto "errores"
   const errores = {};
 
@@ -58,7 +58,7 @@ function validarFormulario() {
 
     crearIntegrantes(cantidadIntegrantes);
     mostrarCantidadIntegrantes();
-    return false;
+    //return false;
   };
 
   $botonEmpezarDeNuevo.onclick = function () {
@@ -83,7 +83,11 @@ function validarFormulario() {
     calcular(edadesIntegrantes);
     mostrarResultados(edadesIntegrantes);
     //}
+
   };
+
+  event.preventDefault();
+
 }
 
 function manejarErrores(errores) {
@@ -130,7 +134,7 @@ function borrarIntegrantes() {
   while ($listaIntegrantes.firstChild) {
     $listaIntegrantes.removeChild($listaIntegrantes.firstChild);
   }
-  $form.querySelector("#cantidad-integrantes-familia").value = "";
+  document.querySelector("#cantidad-integrantes-familia").value = "";
   borrarError();
 }
 
@@ -150,7 +154,7 @@ function mostrarResultados(edadesIntegrantes) {
 }
 
 function mostrarEdades(integrante, calculo) {
-  $form.querySelector(`#${integrante}`).textContent += `${calculo} años.`;
+  document.querySelector(`#${integrante}`).textContent += `${calculo} años.`;
 }
 
 function ocultarResultados() {
@@ -169,10 +173,13 @@ function validarEdadesIntegrantes(edadesIntegrantes) {
   const edadesInvalidas = [];
   for (let i = 0; i < edadesIntegrantes.length; i++) {
     if (Number(edadesIntegrantes[i].value) <= 0) {
-      edadesInvalidas.push([i, "Edad inválida. Ingrese un número correcto"]);
+      edadesInvalidas.push({
+        integrante: i, 
+        error: "Edad inválida. Ingrese un número correcto"
+      });
     }
-    edadesInvalidas.push("");
   }
+
 
   return edadesInvalidas;
 }
@@ -183,9 +190,9 @@ function borrarError() {
 }
 
 function borrarCampos() {
-  $form.querySelector("#mayor-integrante").textContent = "";
-  $form.querySelector("#menor-integrante").textContent = "";
-  $form.querySelector("#promedio-edades-familia").textContent = "";
+  document.querySelector("#mayor-integrante").textContent = "";
+  document.querySelector("#menor-integrante").textContent = "";
+  document.querySelector("#promedio-edades-familia").textContent = "";
 }
 
 $form.onsubmit = validarFormulario;
